@@ -1,5 +1,5 @@
 ---
-title: "Power Analysis in R for Multilevel Models"
+title: "Missing Data Project"
 output: html_document
 ---
 
@@ -61,7 +61,7 @@ head(data8)
 data8$site = rep(1,length(data8$gender))
 
 
-data9 = readWorksheetFromFile("Youth Services Association Session 2 .xlsx", sheet = 1, startCol = 3, endCol = 6)
+data9 = readWorksheetFromFile("Youth Services Association Session 2.xlsx", sheet = 1, startCol = 3, endCol = 6)
 colnames(data9) = c("gender", "sexorien", "age", "eth")
 head(data9)
 data9$site = rep(1,length(data9$gender))
@@ -161,10 +161,62 @@ colnames(data24) = c("gender", "sexorien", "age", "eth")
 head(data24)
 data24$site = rep(1,length(data24$gender))
 
+
+data = rbind(data1, data2, data3, data4, data5, data6, data7, data8, data9, data10, data11, data12, data13, data14, data15, data16, data17, data18, data19, data20, data21, data22, data23, data24)
+data = as.data.frame(data)
+head(data)
+dim(data)
 ```
-Now we need to investigate the missing data (did it include "blanks") and add a site variable indicator
+Now we need to start transforming them into the codes that I created.  First we need to through and get rid of all data that doesn't make sense.  There is an error or if I cannot make any sense from the reponse. 
+
 ```{r}
 
+genderLevels = as.factor(data$gender)
+levels(genderLevels)
+
+ageLevels = as.factor(data$age)
+levels(ageLevels)
+
+ethLevels = as.factor(data$eth)
+levels(ethLevels)
 ```
-Then we need to 
+Now I need to get rid of the ones I cannot make sense of.  Change them t0 -9 and then omit:
+
+Gender = -9,"Professor"
+
+Sexorien = "\"Left\"", "\"F\"", "\"Woman\"", "\"I date men only\"", "\"F\"", "\"Ø\"","\"Yes\"" , "\"M\"", "I'd need to know you better to share that =)", "\"Happily married\"", "\"MYOB\"", "(I?)" , "\"Married to a man\"", "~ ? ~ " 
+
+Age = "\"?\"", "\"50+\"", "\"Old\"", "40 and fabulous", "No Pre", "\"60+\"", "\"2\"", "45+", "over 21", "\"30+\"", "\"Guess\"", "Illegible", "range 22-68", "\"4\"", "\"MYOB\"", "\"40ish\"", "\"Ø\""
+
+eth =  "\"?\"" 
+```{r}
+dataGender = ifelse(data$gender == "Professor", -9, data$gender)
+genderLevels = as.factor(dataTest)
+levels(genderLevels)
+
+dataSexOrien = ifelse(data$sexorien == "\"Left\"", -9, ifelse(data$sexorien == "\"F\"", -9, ifelse(data$sexorien == "\"Woman\"", -9, ifelse( data$sexorien == "\"I date men only\"", -9, ifelse( data$sexorien == "\"I date men only\"", -9, ifelse(data$sexorien == "\"F\"", -9, ifelse(data$sexorien == "\"Ø\"", -9, ifelse(data$sexorien == "\"Yes\"", -9, ifelse(data$sexorien == "\"M\"", -9, ifelse(data$sexorien ==  "I'd need to know you better to share that =)", -9, ifelse(data$sexorien == "\"Happily married\"",-9, ifelse(data$sexorien == "\"MYOB\"" , -9, ifelse( data$sexorien == "(I?)", -9, ifelse( data$sexorien == "~ ? ~ " , -9,data$sexorien))))))))))))))
+sexOrienLevels = as.factor(dataSexOrien)
+levels(sexOrienLevels)
+
+dataAgeTest = ifelse(data$age == "\"?\"", -9, data$age)
+
+dataAge = ifelse(data$age == "\"?\"", -9, ifelse(data$age == "\"50+\"", -9, ifelse("\"50+\"", -9, ifelse(data$age == "\"Old\"", -9, ifelse(data$age == "40 and fabulous", -9, ifelse(data$age == "No Pre", -9, ifelse(data$age == "\"60+\"", -9, ifelse(data$age == "\"2\"", -9, ifelse(data$age == "45+", -9, ifelse(data$age == "over 21", -9, ifelse(data$age == "\"30+\"", -9,ifelse(data$age == "\"Guess\"", -9, ifelse(data$age == "Illegible", -9, ifelse(data$age == "range 22-68", -9, ifelse(data$age == "\"4\"", -9, ifelse(data$age == "\"MYOB\"", -9, ifelse(data$age == "\"40ish\"", -9, ifelse(data$age == "\"Ø\"", -9,data$age ))))))))))))))))))
+dataAge
+levels(ageLevels)
+ageLevels
+
+dataEth = ifelse(data$eth == "\"?\"", -9, ifelse(data$eth == "\"Ø\"" , -9, data$eth))
+ethLevels = as.factor(dataEth)
+levels(ethLevels)
+
+
+```
+
+
+
+Now I need to create a female, otherGI (GI = gender identity), straight, gay, bi, otherSO (SO = sexual orientation), white, black, hispanic, multiracial, AI, otherEI (EI = ethnic identity)
+```{r}
+female = ifelse(data$gender == "")
+```
+
 
