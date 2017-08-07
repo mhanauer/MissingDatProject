@@ -166,32 +166,13 @@ data = as.data.frame(data)
 head(data)
 dim(data)
 ```
-Now we need to start transforming them into the codes that I created.  First we need to through and get rid of all data that doesn't make sense.  There is an error or if I cannot make any sense from the reponse. 
+Here is a list of all the codes that I could not make sense of and therefore deleted for the following variables gender = dataGender; sex orientation = dataSexOrien; age = dataAge; ethnicity = dataEth.
 
-```{r}
+For example in the dataGender variable, I could not figure out how to categorize "Professor"; therefore, I gave it the value -9, which means it will be deleted.
 
-genderLevels = as.factor(data$gender)
-levels(genderLevels)
-
-ageLevels = as.factor(data$age)
-levels(ageLevels)
-
-ethLevels = as.factor(data$eth)
-levels(ethLevels)
-```
-Now I need to get rid of the ones I cannot make sense of.  Change them t0 -9 and then omit:
-
-Gender = -9,"Professor"
-
-Sexorien = "\"Left\"", "\"F\"", "\"Woman\"", "\"I date men only\"", "\"F\"", "\"Ø\"","\"Yes\"" , "\"M\"", "I'd need to know you better to share that =)", "\"Happily married\"", "\"MYOB\"", "(I?)" , "\"Married to a man\"", "~ ? ~ " 
-
-Age = "\"?\"", "\"50+\"", "\"Old\"", "40 and fabulous", "No Pre", "\"60+\"", "\"2\"", "45+", "over 21", "\"30+\"", "\"Guess\"", "Illegible", "range 22-68", "\"4\"", "\"MYOB\"", "\"40ish\"", "\"Ø\""
-
-eth =  "\"?\"" 
+If you can make sense of these options and place them into categories please let me know and I can make the changes.
 ```{r}
 dataGender = ifelse(data$gender == "Professor", -9, ifelse(data$gender == "Straight", -9, ifelse(data$gender =="Nb", -9,  data$gender)))
-genderLevels = as.factor(dataTest)
-levels(genderLevels)
 
 dataSexOrien = ifelse(data$sexorien == "\"Left\"", -9, ifelse(data$sexorien == "\"F\"", -9, ifelse(data$sexorien == "\"Woman\"", -9, ifelse( data$sexorien == "\"I date men only\"", -9, ifelse( data$sexorien == "\"I date men only\"", -9, ifelse(data$sexorien == "\"F\"", -9, ifelse(data$sexorien == "\"Ø\"", -9, ifelse(data$sexorien == "\"Yes\"", -9, ifelse(data$sexorien == "\"M\"", -9, ifelse(data$sexorien ==  "I'd need to know you better to share that =)", -9, ifelse(data$sexorien == "\"Happily married\"",-9, ifelse(data$sexorien == "\"MYOB\"" , -9, ifelse( data$sexorien == "(I?)", -9, ifelse( data$sexorien == "~ ? ~ " , -9, ifelse(data$sexorien == "\"Male\"", -9, ifelse(data$sexorien == "[Crossed something out]", -9, ifelse(data$sexorien == "\"Married to a man\"", -9, ifelse(data$sexorien == "F", -9, ifelse(data$sexorien == "h", -9, ifelse(data$sexorien == "H", -9, ifelse(data$sexorien == "Female",-9, ifelse(data$sexorien == "She" , -9, ifelse(data$sexorien == "Single", -9, ifelse(data$sexorien == "\"Female\"", -9, ifelse(data$sexorien == "L", -9, ifelse(data$sexorien == "M", -9, ifelse(data$sexorien == "\"Feminine\"", -9, ifelse(data$sexorien == "Male", -9,data$sexorien))))))))))))))))))))))))))))
 sexOrienLevels = as.factor(dataSexOrien)
@@ -205,11 +186,12 @@ dataEth = ifelse(data$eth == "\"?\"", -9, ifelse(data$eth == "\"Ø\"" , -9, data
 ethLevels = as.factor(dataEth)
 levels(ethLevels)
 ```
-Here needed to get rid of the ones I cannot make sense of and then also transform the missing into one code "MIssing"
+Here is where I first recode all possible missing values into a "Missing" code and then delete the -9's which are the missing values I created in the step above.
 
+For example, I believe that "Flank" is actually "Blank", which is one of the codes the Prism students to code missing values.  Therefore, I am recoding the "Flank" code to "Missing".  Let me know what you think about these codes.
 ```{r}
 data1 = cbind(dataGender, dataSexOrien, dataAge, dataEth, data$site)
-data1 = ifelse(data1 == "NA", "Missing", ifelse(data1 == -9, NA, ifelse(data1 == "Blank", "Missing", ifelse( data1 == "N/A", "Missing", ifelse(data1 == "Flank", "Missing",ifelse(data1 == "MIssing", "Missing", data1))))))
+data1 = ifelse(data1 == "NA", "Missing", ifelse(data1 == -9, NA, ifelse(data1 == "Blank", "Missing", ifelse( data1 == "N/A", "Missing", ifelse(data1 == "Flank", "Missing",ifelse(data1 == "MIssing", "Missing", ifelse(data1 == "[Crossed something out]", "Missing", data1)))))))
 data1 = as.data.frame(data1)
 head(data1)
 data1 = na.omit(data1)
@@ -228,18 +210,22 @@ colnames(data1) = c("gender", "sexorien", "age", "eth", "site")
 head(data1)
 dim(data1)
 ```
-Now I need to create a female, otherGI (GI = gender identity), straight (reference is everything else), white, black, hispanic, multiracial, AI, otherEI (EI = ethnic identity)
+Here I created a female variable, other gender identity variable (otherGI), and a straight variable.  
 
-"Female/masculine" = coded this a otherGender
+For example, I believed that  "\"Female-> like males\"" meant that they were straight and therefore I coded that as a 1 in the straight variable meaning that they would be classified as straight.  Therefore, the reference category is all non-straight sexual orientations.
 
-"[Crossed something out]" = coded this as otherGender maybe include this as a missing data code
+For the gender variable, I also created a other gender identity variable, which means that male is the reference category for the gender variable.
+
+For sexual orientation, because straight is coded as one, all non-straight sexual orientations are the reference category.
+
+Let me know what you think about these codes.
 ```{r}
 female = ifelse(data1$gender == "\"Female-->sex, androgyne/butch, top/bottom\"", 1, ifelse(data1$gender == "Cis woman", 1, ifelse(data1$gender == "f", 1, ifelse(data1$gender == "F.", 1, ifelse(data1$gender =="Femal",1, ifelse(data1$gender == "Female", 1, ifelse(data1$gender == "Female (Cisgender)", 1, ifelse(data1$gender == "Female/she", 1, ifelse(data1$gender == "Femele", 1, ifelse(data1$gender == "Lady" , 1, ifelse(data1$gender == "Woman", 1, ifelse(data1$gender == "\"Female--cisgender\"", 1, ifelse(data1$gender == "\"She\"", 1, ifelse(data1$gender == "[Female symbol]" , 1, ifelse(data1$gender == "Cis woman", 1, ifelse(data1$gender == "F", 1, ifelse(data1$gender == "Famel",1, ifelse(data1$gender == "Female (cis)", 1, ifelse(data1$gender == "Female/Woman", 1, ifelse(data1$gender == "She, her, hers Female", 1, ifelse(data1$gender == "woman", 1, ifelse(data1$gender =="Woman (she/her)", 1, ifelse(data1$gender == "female", 1, ifelse(data1$gender == "f", 1, ifelse(data1$gender == "Missing", "Missing", 0)))))))))))))))))))))))))
 
 genderLevels = as.factor(data1$gender)
 levels(genderLevels)
 
-otherGI = ifelse(data1$gender == "[Crossed something out]", 1, ifelse(data$gender == "om", 1,ifelse(data1$gender == "Non-binary", 1, ifelse(data1$gender == "Genderqueer", 1, ifelse(data1$gender == "Non-binary", 1, 0)))))
+otherGI =  ifelse(data$gender == "om", 1,ifelse(data1$gender == "Non-binary", 1, ifelse(data1$gender == "Genderqueer", 1, ifelse(data1$gender == "Non-binary", 1, 0))))
 
 head(otherGI)
 sum(otherGI)
@@ -249,26 +235,28 @@ levels(sexorienLevels)
 
 straight = ifelse(data1$sexorien ==  "\"Female-> like males\"" , 1, ifelse(data1$sexorien == "\"Straight?\"", 1, ifelse(data1$sexorien == "[Crossed something out] Straight", 1, ifelse(data1$sexorien == "Herdosexual/Straight" , 1, ifelse(data1$sexorien == "hetero", 1, ifelse(data1$sexorien == "Heterosexual", 1, ifelse(data1$sexorien == "Hetero/Cisgender", 1, ifelse(data1$sexorien == "Male-heterosexual",1, ifelse(data1$sexorien == "Married-Hetero", 1, ifelse(data1$sexorien == "Staight" , 1, ifelse(data1$sexorien == "Straight",1, ifelse(data1$sexorien == "Straight Heterosexual", 1, ifelse(data1$sexorien == "Straight/hetero", 1, ifelse(data1$sexorien == "Strait", 1, ifelse(data1$sexorien == "\"Straight/Ally\"", 1, ifelse(data1$sexorien == "[Crossed out \"Stright\"] Stright", 1, ifelse(data1$sexorien == "heter-", 1, ifelse(data1$sexorien == "hetero ", 1, ifelse(data1$sexorien == "Male/Female Traditional Choice", 1, ifelse(data1$sexorien == "s", 1, ifelse(data1$sexorien =="Straght", 1, ifelse(data1$sexorien == "straight " , 1, ifelse(data1$sexorien == "Straight married", 1, ifelse(data1$sexorien == "Straight/Heterosexual", 1, ifelse(data1$sexorien == "streight", 1, ifelse(data1$sexorien == "Hetero/Cisgender" ,1, ifelse(data1$sexorien == "married straight cisender", 1, ifelse(data1$sexorien == "S", 1, ifelse(data1$sexorien =="straight" , 1, ifelse(data1$sexorien == "Straight (Cisgender)", 1, ifelse(data1$sexorien == "Straight.", 1, ifelse(data1$sexorien == "strait", 1, ifelse(data1$sexorien == "Traditional", 1, ifelse(data1$sexorien == "\"F Hetero\"", 1, ifelse(data1$sexorien =="\"Hetero-Female\"", 1, ifelse(data1$sexorien == "\"Straight/ally\"" , 1, ifelse(data1$sexorien == "[Crossed out \"Femal\"] Heterosexual", 1, ifelse(data1$sexorien == "Heteroflexible", 1, ifelse(data1$sexorien == "heterosexual [crossed out straight]", 1, ifelse(data1$sexorien == "Male-heterosexual", 1, ifelse(data1$sexorien == "Straight Heterosexual" , 1, ifelse( data1$sexorien == "Missing", "Missing", 0))))))))))))))))))))))))))))))))))))))))))
 ```
-Now eth time
-white; black; hispanic; multi; otherEth.  Don't need white, because that is the reference category
+Now I am doing the same for the ethnicity variable and creating the following categories: black, hispanic, multi (i.e. multiracial), and other ethnicity (otherEth).  Therefore, white is the reference category.
 ```{r}
 ethLevels = as.factor(data1$eth)
 levels(ethLevels)
-#white = ifelse(data1$eth == "\"White/Euro Am\"", 1, ifelse(data1$eth == "\"White/Italian American\"", 1, ifelse(data1$eth == "[Crossed out \"white\"] Caucasian",1, ifelse(data1$eth == "C", 1, ifelse(data1$eth == "Cauc", 1, ifelse(data1$eth == "caucasian", 1, ifelse(data1$eth == "Caucasian (non-Hispanic)", 1, ifelse(data1$eth == "caucasin", 1, ifelse(data1$eth == "Caucasian (non-Hispanic)", 1, ifelse(data1$eth == "caucasin", 1, ifelse(data1$eth == "Caucasion", 1, ifelse(data1$eth == "European", 1, ifelse(data1$eth == "European",1, ifelse(data1$eth == "German-American/White/Euro-American", 1, ifelse(data1$eth == "Mostly European", 1, ifelse(data1$eth == "w", 1, ifelse(data1$eth == "white", 1, ifelse(data1$eth == "White/American" , 1,ifelse(data1$eth ==  "White/Jew", 1, ifelse(data1$eth == "White/non-Hispanic", 1, ifelse(data1$eth == "whtie", 1, ifelse() )))))))))))))))))))))
 
 black = ifelse(data1$eth == "Af. Am.", 1, ifelse(data1$eth == "African American", 1, ifelse(data$eth == "African-American", 1, ifelse(data1$eth == "Africian American", 1, ifelse(data1$eth == "black", 1, ifelse(data1$eth == "Black - African American", 1, ifelse(data1$eth == "Black/African American", 1, ifelse(data1$eth == "AA", 1, ifelse(data1$eth ==  "African American Black" , 1, ifelse(data1$eth == "Blacc", 1, ifelse(data1$eth == "Black", 1, ifelse(data1$eth == "Missing", "Missing",0))))))))))))
 
-hispanic =  ifelse(data1$eth ==   "hispanic", 1, ifelse(data1$eth == "H", 1, ifelse(data1$eth == "Hispanic" , 1, ifelse(data1$eth == "Hispanic/Latina", 1, ifelse(data1$eth == "Latina", 1, ifelse(data1$eth == "Latino/Hispanic", 1, ifelse(data1$eth == "Latino", 1, 0)))))))                                                                                                                                   multi = ifelse(data1$eth == "hispanic/white", 1, ifelse(data1$eth == "many", 1, ifelse(data1$eth == "Mixed", 1, ifelse(data1$eth == "White & Latinx", 1, ifelse(data1$eth == "\"M\"" , 1, ifelse(data1$eth ==  "African, Irish, American", 1, ifelse(data1$eth == "black + other", 1, ifelse(data1$eth == "Caucasian/Hispanic", 1, ifelse(data1$eth == "m", 1, ifelse(data1$eth == "Many",1, ifelse(data1$eth == "Mix", 1, ifelse(data1$eth == "Mixed white/South Asian", 1, ifelse(data1$eth == "Multiethnic Afrolatina + white", 1, ifelse(data1$eth == "Multiracial" , 1, ifelse(data1$eth ==  "White/mixed", 1,0))))))))))))))) 
+hispanic =  ifelse(data1$eth ==   "hispanic", 1, ifelse(data1$eth == "H", 1, ifelse(data1$eth == "Hispanic" , 1, ifelse(data1$eth == "Hispanic/Latina", 1, ifelse(data1$eth == "Latina", 1, ifelse(data1$eth == "Latino/Hispanic", 1, ifelse(data1$eth == "Latino", 1, 0)))))))                                                 
+
+multi = ifelse(data1$eth == "hispanic/white", 1, ifelse(data1$eth == "many", 1, ifelse(data1$eth == "Mixed", 1, ifelse(data1$eth == "White & Latinx", 1, ifelse(data1$eth == "\"M\"" , 1, ifelse(data1$eth ==  "African, Irish, American", 1, ifelse(data1$eth == "black + other", 1, ifelse(data1$eth == "Caucasian/Hispanic", 1, ifelse(data1$eth == "m", 1, ifelse(data1$eth == "Many",1, ifelse(data1$eth == "Mix", 1, ifelse(data1$eth == "Mixed white/South Asian", 1, ifelse(data1$eth == "Multiethnic Afrolatina + white", 1, ifelse(data1$eth == "Multiracial" , 1, ifelse(data1$eth ==  "White/mixed", 1,0))))))))))))))) 
 
 otherEth = ifelse(data1$eth == "\"Indian\"", 1, ifelse(data1$eth == "Asian", 1, ifelse(data1$eth == "\"Greek\"", 1, ifelse(data1$eth == "ai", 1, ifelse(data1$eth == "Native American", 1, ifelse(data1$eth == "None", 1, ifelse(data1$eth == "Asian Pacific Islander", 1, ifelse(data1$eth == "Filipino", 1, ifelse(data1$eth == "Other",1, 0)))))))))
 ```
-Now we can create a variable that captures missingness in variables.  Need to create a missing variable for each dependent variable.  Just sexual orientation first and check the rest of them later if of interest.  Then see how gender, ethnicity, and age are related to missinginess in sexual orientation.  Will run into the problem of multiple missing values so it could the case that people are missing on sex orientation and gender, and it could be that gender is actually predicting the missingness among sex orientation.
+Here I am creating a missing data identifier for the sexual orientation variable "sexorien".  I have to create a unique missing variable for each variable separately, because missing data must be deleted from the model.  
 
-Need to combine all of the variables into one data frame first.
+For example, if I wanted to assess whether missing data across all variables is related to any of the included variables, I would create a missing variable that is a 1 anytime any variable has a missing value and zero otherwise.  However, because I need to delete all missing values before I run the analysis, I would end up deleting all the 1's in the missing data variable so there would be no variation.
 
-I what I am doing is deleting all of the missing values for all other variables expect sexorientation, which the missing values are represented by missingSexOrien.  So if there are multiple missing values then could lose some of the missing values from sexorien. 
+Therefore, if I create a missing variable indicator for one variable (in the example below I create a missing data variable for sex orientation = sexorien), then delete the missing values for the other variables (female, otherGI, black, hispanic, multi, otherEth, age) I can delete the missing values for all other variables and keep missing values for sex orientation that are not also missing for other variables.
 
-Now we can develop a model where people are nested in sites, so sites are the level two model.
+For example, if one person had a missing value for both sexual orientation and gender, then using this process they would be deleted from the dataset.
+
+One way either around or to validate this procedure would be to impute missing values.  For example, before imputation, I would create either a binary or count variable representing either each time or the count of missing values across each person for each variable.  Then we can impute the missing values using an R package.  Then we can run the analysis with the binary or count variable indicator that was created before imputation as the dependent variable with all other variables (e.g. female, black) as independent variables.  This has drawbacks as well, because this procedure is assuming that data is missing, because of included variables, but it could be the case that data are missing because of other variables, so it is unclear if the imputed values are any good.  
 ```{r}
 missingSexOrien = data1$sexorien
 missingSexOrien = ifelse(data1$sexorien == "Missing", 1, 0)
@@ -283,10 +271,15 @@ dataAnalysis = na.omit(dataAnalysis)
 dataAnalysis = as.data.frame(dataAnalysis)
 dim(dataAnalysis)
 head(dataAnalysis)
+```
+Here I have an example of the model with missing values found in the sexual orientation variable indicated as a 1 for missing and 0 for non-missing.  Then I include the other covariates in the model and allow the model to have different intercepts for different sites, which are the locations that each program took place at.
+
+Overall, none of the included covariates are statistically significantly related to missing values in sexual orientation.
+```{r}
 library(nlme)
 library(lme4)
 model = glmer(missingSexOrien ~ female + otherGI + black + hispanic + multi + otherEth +(1 | site), family = binomial("logit"), data = dataAnalysis)
-
+summary(model)
 ```
 
 
