@@ -7,6 +7,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 Here we are reading in each data file naming them data1:total.  See what happens when there is missing data.
+
+The following organizations had two sesstions Youth Services Association, IUSSW Alumni Conference , Janet Decker Law Class, and MCCSC had three sessions.  There are 23 total excel documents with 5 duplicates therefore there are 18 unique sites visited with 23 total programs provided to 1063 people.
 ```{r}
 setwd("~/Box Sync/Unreviewed Excel Training Data/ Matt'sExcelTraining Data")
 library(XLConnect)
@@ -143,25 +145,19 @@ head(data21)
 data21$site = rep(21,length(data21$gender))
 
 
-data22 = readWorksheetFromFile("IUSSW Alumni Conference.xlsx", sheet = 2, startCol = 3, endCol = 6)
+data22 = readWorksheetFromFile("MCCSC LGBTQA+ Competency Training_assessment data.xlsx", sheet = 2, startCol = 4, endCol = 7)
 colnames(data22) = c("gender", "sexorien", "age", "eth")
 head(data22)
-data22$site = rep(22,length(data22$gender))
+data22$site = rep(22,length(data23$gender))
 
 
-data23 = readWorksheetFromFile("MCCSC LGBTQA+ Competency Training_assessment data.xlsx", sheet = 2, startCol = 4, endCol = 7)
+data23 = readWorksheetFromFile("MCCSC LGBTQA+ Competency Training_assessment data.xlsx", sheet = 3, startCol = 5, endCol = 8)
 colnames(data23) = c("gender", "sexorien", "age", "eth")
 head(data23)
 data23$site = rep(23,length(data23$gender))
 
 
-data24 = readWorksheetFromFile("MCCSC LGBTQA+ Competency Training_assessment data.xlsx", sheet = 3, startCol = 5, endCol = 8)
-colnames(data24) = c("gender", "sexorien", "age", "eth")
-head(data24)
-data24$site = rep(24,length(data24$gender))
-
-
-data = rbind(data1, data2, data3, data4, data5, data6, data7, data8, data9, data10, data11, data12, data13, data14, data15, data16, data17, data18, data19, data20, data21, data22, data23, data24)
+data = rbind(data1, data2, data3, data4, data5, data6, data7, data8, data9, data10, data11, data12, data13, data14, data15, data16, data17, data18, data19, data20, data21, data22, data23)
 data = as.data.frame(data)
 head(data)
 ## Here is where you get the number of particpants 1063
