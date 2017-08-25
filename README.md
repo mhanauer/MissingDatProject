@@ -164,11 +164,6 @@ If you can make sense of these options and place them into categories please let
 ```{r}
 dataGender = ifelse(data$gender == "Professor", -9, ifelse(data$gender == "Straight", -9, ifelse(data$gender =="Nb", -9,  data$gender)))
 
-dataSexOrien = ifelse(data$sexorien == "\"Left\"", -9, ifelse(data$sexorien == "\"F\"", -9, ifelse(data$sexorien == "\"Woman\"", -9, ifelse( data$sexorien == "\"I date men only\"", -9, ifelse( data$sexorien == "\"I date men only\"", -9, ifelse(data$sexorien == "\"F\"", -9, ifelse(data$sexorien == "\"Ø\"", -9, ifelse(data$sexorien == "\"Yes\"", -9, ifelse(data$sexorien == "\"M\"", -9, ifelse(data$sexorien ==  "I'd need to know you better to share that =)", -9, ifelse(data$sexorien == "\"Happily married\"",-9, ifelse(data$sexorien == "\"MYOB\"" , -9, ifelse( data$sexorien == "(I?)", -9, ifelse( data$sexorien == "~ ? ~ " , -9, ifelse(data$sexorien == "\"Male\"", -9, ifelse(data$sexorien == "[Crossed something out]", -9, ifelse(data$sexorien == "\"Married to a man\"", -9, ifelse(data$sexorien == "F", -9, ifelse(data$sexorien == "h", -9, ifelse(data$sexorien == "H", -9, ifelse(data$sexorien == "Female",-9, ifelse(data$sexorien == "She" , -9, ifelse(data$sexorien == "Single", -9, ifelse(data$sexorien == "\"Female\"", -9, ifelse(data$sexorien == "L", -9, ifelse(data$sexorien == "M", -9, ifelse(data$sexorien == "\"Feminine\"", -9, ifelse(data$sexorien == "Male", -9,data$sexorien))))))))))))))))))))))))))))
-sexOrienLevels = as.factor(dataSexOrien)
-levels(sexOrienLevels)
-
-
 
 dataAge = ifelse(data$age == "\"?\"", -9, ifelse(data$age == "\"50+\"", -9,ifelse(data$age == "\"Old\"", -9, ifelse(data$age == "40 and fabulous",-9,ifelse(data$age == "No Pre", -9, ifelse(data$age == "\"60+\"", -9, ifelse(data$age == "\"2\"", -9, ifelse(data$age == "45+", -9, ifelse(data$age == "over 21", -9, ifelse(data$age == "\"30+\"", -9,ifelse(data$age == "\"Guess\"", -9, ifelse(data$age == "Illegible", -9, ifelse(data$age == "range 22-68", -9, ifelse(data$age == "\"4\"", -9, ifelse(data$age == "\"MYOB\"", -9, ifelse(data$age == "\"40ish\"", -9, ifelse(data$age == "\"Ø\"", -9,data$age )))))))))))))))))
 
@@ -182,21 +177,14 @@ Here is where I first recode all possible missing values into a "Missing" code a
 For example, I believe that "Flank" is actually "Blank", which is one of the codes the Prism students to code missing values.  Therefore, I am recoding the "Flank" code to "Missing".  Let me know what you think about these codes.
 ```{r}
 data1 = cbind(dataGender, dataSexOrien, dataAge, dataEth, data$site)
-data1 = ifelse(data1 == "NA", "Missing", ifelse(data1 == -9, NA, ifelse(data1 == "Blank", "Missing", ifelse( data1 == "N/A", "Missing", ifelse(data1 == "Flank", "Missing",ifelse(data1 == "MIssing", "Missing", ifelse(data1 == "[Crossed something out]", "Missing", data1)))))))
+data1 =apply(data1, 2, function(x) {ifelse(x == "NA", "Missing", ifelse(x == -9, NA, ifelse(x == "Blank", "Missing", ifelse( x == "N/A", "Missing", ifelse(x == "Flank", "Missing",ifelse(x == "MIssing", "Missing", ifelse(x == "[Crossed something out]", "Missing", ifelse(x == "I'd need to know you better to share that =)", NA, ifelse(x =="[Crossed something out]", NA, x )))))))))})
+
 data1 = as.data.frame(data1)
 head(data1)
 data1 = na.omit(data1)
 sum(is.na(data1))
 data1 = as.data.frame(data1)
 dim(data1)
-head(data1)
-data2 = data1[,1:4]
-head(data2)
-head(data1)
-site = data1$V5
-site = as.data.frame(site)
-data1 =  cbind(data2, site)
-head(data1)
 colnames(data1) = c("gender", "sexorien", "age", "eth", "site")
 head(data1)
 dim(data1)
@@ -211,12 +199,17 @@ For sexual orientation, because straight is coded as one, all non-straight sexua
 
 Let me know what you think about these codes.
 ```{r}
-female = ifelse(data1$gender == "\"Female-->sex, androgyne/butch, top/bottom\"", 1, ifelse(data1$gender == "Cis woman", 1, ifelse(data1$gender == "f", 1, ifelse(data1$gender == "F.", 1, ifelse(data1$gender =="Femal",1, ifelse(data1$gender == "Female", 1, ifelse(data1$gender == "Female (Cisgender)", 1, ifelse(data1$gender == "Female/she", 1, ifelse(data1$gender == "Femele", 1, ifelse(data1$gender == "Lady" , 1, ifelse(data1$gender == "Woman", 1, ifelse(data1$gender == "\"Female--cisgender\"", 1, ifelse(data1$gender == "\"She\"", 1, ifelse(data1$gender == "[Female symbol]" , 1, ifelse(data1$gender == "Cis woman", 1, ifelse(data1$gender == "F", 1, ifelse(data1$gender == "Famel",1, ifelse(data1$gender == "Female (cis)", 1, ifelse(data1$gender == "Female/Woman", 1, ifelse(data1$gender == "She, her, hers Female", 1, ifelse(data1$gender == "woman", 1, ifelse(data1$gender =="Woman (she/her)", 1, ifelse(data1$gender == "female", 1, ifelse(data1$gender == "f", 1, ifelse(data1$gender == "Missing", "Missing", 0)))))))))))))))))))))))))
 
+dataSexOrien = ifelse(data$sexorien == "\"Left\"", 1, ifelse(data$sexorien == "\"F\"", 1, ifelse(data$sexorien == "\"Woman\"", 1, ifelse( data$sexorien == "\"I date men only\"", 1, ifelse( data$sexorien == "\"I date men only\"", 1, ifelse(data$sexorien == "\"F\"", 1, ifelse(data$sexorien == "\"Ø\"", 1, ifelse(data$sexorien == "\"Yes\"", 1, ifelse(data$sexorien == "\"M\"", 1, ifelse(data$sexorien == "\"Happily married\"",1, ifelse(data$sexorien == "\"MYOB\"" , 1, ifelse( data$sexorien == "(I?)", 1, ifelse( data$sexorien == "~ ? ~ " , 1, ifelse(data$sexorien == "\"Male\"", 1, ifelse(data$sexorien == "\"Married to a man\"", 1, ifelse(data$sexorien == "F", 1, ifelse(data$sexorien == "h", 1, ifelse(data$sexorien == "H", 1, ifelse(data$sexorien == "Female",1, ifelse(data$sexorien == "She" , 1, ifelse(data$sexorien == "Single", 1, ifelse(data$sexorien == "\"Female\"", 1, ifelse(data$sexorien == "L", 1, ifelse(data$sexorien == "M", 1, ifelse(data$sexorien == "\"Feminine\"", 1, ifelse(data$sexorien == "Male", 1,data$sexorien))))))))))))))))))))))))))
+sexOrienLevels = as.factor(dataSexOrien)
+levels(sexOrienLevels)
+
+female = ifelse(data1$gender == "\"Female-->sex, androgyne/butch, top/bottom\"", 1, ifelse(data1$gender == "Cis woman", 1, ifelse(data1$gender == "f", 1, ifelse(data1$gender == "F.", 1, ifelse(data1$gender =="Femal",1, ifelse(data1$gender == "Female", 1, ifelse(data1$gender == "Female (Cisgender)", 1, ifelse(data1$gender == "Female/she", 1, ifelse(data1$gender == "Femele", 1, ifelse(data1$gender == "Lady" , 1, ifelse(data1$gender == "Woman", 1, ifelse(data1$gender == "\"Female--cisgender\"", 1, ifelse(data1$gender == "\"She\"", 1, ifelse(data1$gender == "[Female symbol]" , 1, ifelse(data1$gender == "Cis woman", 1, ifelse(data1$gender == "F", 1, ifelse(data1$gender == "Famel",1, ifelse(data1$gender == "Female (cis)", 1, ifelse(data1$gender == "Female/Woman", 1, ifelse(data1$gender == "She, her, hers Female", 1, ifelse(data1$gender == "woman", 1, ifelse(data1$gender =="Woman (she/her)", 1, ifelse(data1$gender == "female", 1, ifelse(data1$gender == "f", 1, ifelse(data1$gender == "Missing", "Missing", 0)))))))))))))))))))))))))
+dim(female)
 genderLevels = as.factor(data1$gender)
 levels(genderLevels)
 
-otherGI =  ifelse(data$gender == "om", 1,ifelse(data1$gender == "Non-binary", 1, ifelse(data1$gender == "Genderqueer", 1, ifelse(data1$gender == "Non-binary", 1, 0))))
+otherGI =  ifelse(data1$gender == "om", 1,ifelse(data1$gender == "Non-binary", 1, ifelse(data1$gender == "Genderqueer", 1, ifelse(data1$gender == "Non-binary", 1, 0))))
 
 head(otherGI)
 sum(otherGI)
@@ -250,8 +243,25 @@ For example, if one person had a missing value for both sexual orientation and g
 One way either around or to validate this procedure would be to impute missing values.  For example, before imputation, I would create either a binary or count variable representing either each time or the count of missing values across each person for each variable.  Then we can impute the missing values using an R package.  Then we can run the analysis with the binary or count variable indicator that was created before imputation as the dependent variable with all other variables (e.g. female, black) as independent variables.  This has drawbacks as well, because this procedure is assuming that data is missing, because of included variables, but it could be the case that data are missing because of other variables, so it is unclear if the imputed values are any good.  
 ```{r}
 missingSexOrien = data1$sexorien
-missingSexOrien = ifelse(data1$sexorien == "Missing", 1, 0)
-dataAnalysis = cbind(missingSexOrien, female, otherGI, black, hispanic, multi, otherEth, age = data1$age, site)
+missingSexOrien = as.data.frame(ifelse(data1$sexorien == "Missing", 1, 0))
+colnames(missingSexOrien) = c("missingSexOrien")
+dim(missingSexOrien)
+female = as.data.frame(female)
+dim(female)
+otherGI = as.data.frame(otherGI)
+dim(otherGI)
+black = as.data.frame(black)
+dim(black)
+hispanic = as.data.frame(hispanic)
+dim(hispanic)
+multi = as.data.frame(multi)
+otherEth = as.data.frame(otherEth)
+site = as.data.frame(site)
+dim(site)
+dataSexOrien = as.data.frame(dataSexOrien)
+dim(dataSexOrien)
+
+dataAnalysis = cbind(missingSexOrien, dataSexOrien, female, otherGI, black, hispanic, multi, otherEth, age = data1$age, site)
 
 dataAnalysis = as.data.frame(dataAnalysis)
 head(dataAnalysis)
@@ -272,8 +282,3 @@ library(lme4)
 model = glmer(missingSexOrien ~ female + otherGI + black + hispanic + multi + otherEth +(1 | site), family = binomial("logit"), data = dataAnalysis)
 summary(model)
 ```
-
-
-
-
-
