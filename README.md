@@ -55,7 +55,6 @@ head(data7)
 data7$site = rep(7,length(data7$gender))
 
 
-
 data8 = readWorksheetFromFile("Youth Services Association Administraiont 9012016.xlsx", sheet = 1, startCol = 3, endCol = 6)
 colnames(data8) = c("gender", "sexorien", "age", "eth")
 head(data8)
@@ -68,22 +67,17 @@ head(data9)
 data9$site = rep(9,length(data9$gender))
 
 
+
 data10 = readWorksheetFromFile("Youth Services Bureau 7-29-16 (Created by Piper; Edited by Brie).xlsx", sheet = 1, startCol = 3, endCol = 6)
 colnames(data10) = c("gender", "sexorien", "age", "eth")
 head(data10)
 data10$site = rep(10,length(data10$gender))
 
 
-data11 = readWorksheetFromFile("Youth Services Bureau 7-29-16 (Created by Piper; Edited by Brie).xlsx", sheet = 1, startCol = 3, endCol = 6)
+data11 = readWorksheetFromFile("Ivy Tech 2017 Training.xlsx", sheet = 1, startCol = 2, endCol = 5)
 colnames(data11) = c("gender", "sexorien", "age", "eth")
 head(data11)
 data11$site = rep(11,length(data11$gender))
-
-
-data12 = readWorksheetFromFile("Ivy Tech 2017 Training.xlsx", sheet = 1, startCol = 2, endCol = 5)
-colnames(data12) = c("gender", "sexorien", "age", "eth")
-head(data12)
-data12$site = rep(12,length(data12$gender))
 
 
 data13 = readWorksheetFromFile("IUSSW Alumni Conference.xlsx", sheet = 1, startCol = 3, endCol = 6)
@@ -92,11 +86,6 @@ head(data13)
 data13 = data13[-1,]
 data13$site = rep(13,length(data13$gender))
 
-
-data14 = readWorksheetFromFile("IUSSW Alumni Conference.xlsx", sheet = 1, startCol = 3, endCol = 6)
-colnames(data14) = c("gender", "sexorien", "age", "eth")
-head(data14)
-data14$site = rep(14,length(data14$gender))
 
 
 data15 = readWorksheetFromFile("IU Pre School Training 12716.xlsx", sheet = 1, startCol = 4, endCol = 7)
@@ -148,7 +137,7 @@ data21$site = rep(21,length(data21$gender))
 data22 = readWorksheetFromFile("MCCSC LGBTQA+ Competency Training_assessment data.xlsx", sheet = 2, startCol = 4, endCol = 7)
 colnames(data22) = c("gender", "sexorien", "age", "eth")
 head(data22)
-data22$site = rep(22,length(data23$gender))
+data22$site = rep(22,length(data22$gender))
 
 
 data23 = readWorksheetFromFile("MCCSC LGBTQA+ Competency Training_assessment data.xlsx", sheet = 3, startCol = 5, endCol = 8)
@@ -157,10 +146,11 @@ head(data23)
 data23$site = rep(23,length(data23$gender))
 
 
-data = rbind(data1, data2, data3, data4, data5, data6, data7, data8, data9, data10, data11, data12, data13, data14, data15, data16, data17, data18, data19, data20, data21, data22, data23)
+data = rbind(data1, data2, data3, data4, data5, data6, data7, data8, data9, data10, data11, data13, data15, data16, data17, data18, data19, data20, data21, data22, data23)
+# No data12 or data14 there are 21 unique sites.
 data = as.data.frame(data)
 head(data)
-## Here is where you get the number of particpants 1063
+## Here is where you get the number of particpants 1037
 dim(data)
 ```
 Here is a list of all the codes that I could not make sense of and therefore deleted for the following variables gender = dataGender; sex orientation = dataSexOrien; age = dataAge; ethnicity = dataEth.
