@@ -298,11 +298,13 @@ Overall, none of the included covariates are statistically significantly related
 ```{r}
 library(nlme)
 library(lme4)
+ageNum = as.numeric(dataAnalysis$age)
+dataAnalysis$ageNum = ageNum
 model = glmer(missingSexOrien ~ female +data1SexOrien + otherGI + black + hispanic + multi + otherEth +(1 | site), family = binomial("logit"), data = dataAnalysis)
 summary(model)
 
 library(Zelig)
-z.out1 <- zelig(missingSexOrien ~ female +data1SexOrien +Prog + otherGI + black + hispanic + multi + otherEth + site, model = "logit", data = dataAnalysis, cite = FALSE)
+z.out1 <- zelig(missingSexOrien ~ female +data1SexOrien +ageNum +Prog + otherGI + black + hispanic + multi + otherEth + site, model = "logit", data = dataAnalysis, cite = FALSE)
 summary(z.out1)
 
 .05/27
