@@ -8,7 +8,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 Here we are reading in each data file naming them data1:total.  See what happens when there is missing data.
 
-The following organizations had two sesstions Youth Services Association, IUSSW Alumni Conference , Janet Decker Law Class, and MCCSC had three sessions.  I data12 is missing there so there are 22 total excel documents with 5 duplicates therefore there are 17 unique sites visited with 22 total programs provided to 1041 people.
+Not counting "Feedback Form- LGBTQ+ Youth Cultural Compenecy Training" because it has no data of interest only feedback.
+
+The following organizations had two sesstions Youth Services Association, IUSSW Alumni Conference , Janet Decker Law Class, and MCCSC had three sessions.  23 total excel documents with relevant data (24 total one above no relevant data) with 5 duplicates therefore there are 18 unique sites visited with 23 total programs provided to 1046 people.
 ```{r}
 #setwd("~/Box Sync/Unreviewed Excel Training Data/ Matt'sExcelTraining Data")
 library(XLConnect)
@@ -39,6 +41,7 @@ data4$site = rep(4,length(data4$gender))
 data5 = readWorksheetFromFile("Pride Board Training 7142016.xlsx", sheet = 1, startCol = 1, endCol = 4)
 colnames(data5) = c("gender", "sexorien", "age", "eth")
 head(data5)
+data5 = data5[-1,]
 data5$site = rep(5,length(data5$gender))
 
 
@@ -51,12 +54,14 @@ data6$site = rep(6,length(data6$gender))
 data7 = readWorksheetFromFile("Terre Haute 7272016.xlsx", sheet = 1, startCol = 4, endCol = 7)
 colnames(data7) = c("gender", "sexorien", "age", "eth")
 head(data7)
+data7 = data7[-1,]
 data7$site = rep(7,length(data7$gender))
 
 
 data8 = readWorksheetFromFile("Youth Services Association Administraiont 9012016.xlsx", sheet = 1, startCol = 3, endCol = 6)
 colnames(data8) = c("gender", "sexorien", "age", "eth")
 head(data8)
+data8 = data8[-1,]
 data8$site = rep(8,length(data8$gender))
 
 
@@ -78,6 +83,10 @@ colnames(data11) = c("gender", "sexorien", "age", "eth")
 head(data11)
 data11$site = rep(11,length(data11$gender))
 
+data12 = readWorksheetFromFile("IYI Conference.xls", sheet = 1, startCol = 3, endCol = 6)
+colnames(data12) = c("gender", "sexorien", "age", "eth")
+head(data12)
+data12$site = rep(12,length(data12$gender))
 
 data13 = readWorksheetFromFile("IUSSW Alumni Conference.xlsx", sheet = 1, startCol = 3, endCol = 6)
 colnames(data13) = c("gender", "sexorien", "age", "eth")
@@ -88,7 +97,6 @@ data13$site = rep(13,length(data13$gender))
 data14 = readWorksheetFromFile("IUSSW Alumni Conference.xlsx", sheet = 2, startCol = 3, endCol = 6)
 colnames(data14) = c("gender", "sexorien", "age", "eth")
 head(data14)
-data14 = data14[-1,]
 data14$site = rep(14,length(data14$gender))
 
 data15 = readWorksheetFromFile("IU Pre School Training 12716.xlsx", sheet = 1, startCol = 4, endCol = 7)
@@ -158,21 +166,18 @@ For example in the dataGender variable, I could not figure out how to categorize
 
 If you can make sense of these options and place them into categories please let me know and I can make the changes.
 ```{r}
-dataGender = ifelse(data$gender == "Professor", -9, ifelse(data$gender == "Straight", -9, ifelse(data$gender =="Nb", -9,  data$gender)))
+dataGender = ifelse(data$gender == "Professor", -9, ifelse(data$gender == "Straight", -9, ifelse(data$gender =="Nb", -9, ifelse(data$gender == "[Crossed something out]", -9, ifelse(data$gender == "\"Yes\"", -9, data$gender)))))
 
 dataAge = ifelse(data$age == "\"?\"", -9, ifelse(data$age == "\"50+\"", -9,ifelse(data$age == "\"Old\"", -9, ifelse(data$age == "40 and fabulous",-9,ifelse(data$age == "No Pre", -9, ifelse(data$age == "\"60+\"", -9, ifelse(data$age == "\"2\"", -9, ifelse(data$age == "45+", -9, ifelse(data$age == "over 21", -9, ifelse(data$age == "\"30+\"", -9,ifelse(data$age == "\"Guess\"", -9, ifelse(data$age == "Illegible", -9, ifelse(data$age == "range 22-68", -9, ifelse(data$age == "\"4\"", -9, ifelse(data$age == "\"MYOB\"", -9, ifelse(data$age == "\"40ish\"", -9, ifelse(data$age == "\"Ø\"", -9, ifelse(data$age == "50+", -9,data$age))))))))))))))))))
 
-
 dataEth = ifelse(data$eth == "\"?\"", -9, ifelse(data$eth == "\"Ø\"" , -9, data$eth))
-ethLevels = as.factor(dataEth)
-#levels(ethLevels)
 ```
 Here is where I first recode all possible missing values into a "Missing" code and then delete the -9's which are the missing values I created in the step above.
 
 For example, I believe that "Flank" is actually "Blank", which is one of the codes the Prism students to code missing values.  Therefore, I am recoding the "Flank" code to "Missing".  Let me know what you think about these codes.
 ```{r}
-data1 = cbind(dataGender, dataAge, data$sexorien, dataEth, data$site)
-head(data1)
+data1 = cbind(gender = dataGender, age = dataAge, sexorien = data$sexorien,eth =  dataEth, site = data$site)
+data1 =as.data.frame(data1)
 data1 =apply(data1, 2, function(x) {ifelse(x == "NA", "Missing", ifelse(x == -9, NA, ifelse(x == "Blank", "Missing", ifelse( x == "N/A", "Missing", ifelse(x == "Flank", "Missing",ifelse(x == "MIssing", "Missing", ifelse(x == "[Crossed something out]", "Missing", ifelse(x == "I'd need to know you better to share that =)", NA, ifelse(x =="[Crossed something out]", NA, x )))))))))})
 
 data1 = as.data.frame(data1)
@@ -198,8 +203,9 @@ Let me know what you think about these codes.
 The data1SexOrien variable is the incorrect variable.  I didn't change the name, because the name is used later on.
 ```{r}
 
-data1SexOrien = ifelse(data1$sexorien == "\"Left\"", 1, ifelse(data1$sexorien == "\"F\"", 1, ifelse(data1$sexorien == "\"Woman\"", 1, ifelse( data1$sexorien == "\"I date men only\"", 1, ifelse( data1$sexorien == "\"I date men only\"", 1, ifelse(data1$sexorien == "\"F\"", 1, ifelse(data1$sexorien == "\"Ø\"", 1, ifelse(data1$sexorien == "\"Yes\"", 1, ifelse(data1$sexorien == "\"M\"", 1, ifelse(data1$sexorien == "\"Happily married\"",1, ifelse(data1$sexorien == "\"MYOB\"" , 1, ifelse( data1$sexorien == "(I?)", 1, ifelse( data1$sexorien == "~ ? ~ " , 1, ifelse(data1$sexorien == "\"Male\"", 1, ifelse(data1$sexorien == "\"Married to a man\"", 1, ifelse(data1$sexorien == "F", 1, ifelse(data1$sexorien == "h", 1, ifelse(data1$sexorien == "H", 1, ifelse(data1$sexorien == "Female",1, ifelse(data1$sexorien == "She" , 1, ifelse(data1$sexorien == "Single", 1, ifelse(data1$sexorien == "\"Female\"", 1, ifelse(data1$sexorien == "L", 1, ifelse(data1$sexorien == "M", 1, ifelse(data1$sexorien == "\"Feminine\"", 1, ifelse(data1$sexorien == "Male", 1,0))))))))))))))))))))))))))
+data1SexOrien = ifelse(data1$sexorien == "\"Left\"", 1, ifelse(data1$sexorien == "\"F\"", 1, ifelse(data1$sexorien == "\"Woman\"", 1, ifelse( data1$sexorien == "\"I date men only\"", 1, ifelse( data1$sexorien == "\"I date men only\"", 1, ifelse(data1$sexorien == "\"F\"", 1, ifelse(data1$sexorien == "\"Ø\"", 1, ifelse(data1$sexorien == "\"Yes\"", 1, ifelse(data1$sexorien == "\"M\"", 1, ifelse(data1$sexorien == "\"Happily married\"",1, ifelse(data1$sexorien == "\"MYOB\"" , 1, ifelse( data1$sexorien == "(I?)", 1, ifelse( data1$sexorien == "~ ? ~ " , 1, ifelse(data1$sexorien == "\"Male\"", 1, ifelse(data1$sexorien == "\"Married to a man\"", 1, ifelse(data1$sexorien == "F", 1, ifelse(data1$sexorien == "h", 1, ifelse(data1$sexorien == "H", 1, ifelse(data1$sexorien == "Female",1, ifelse(data1$sexorien == "She" , 1, ifelse(data1$sexorien == "Single", 1, ifelse(data1$sexorien == "\"Female\"", 1, ifelse(data1$sexorien == "L", 1, ifelse(data1$sexorien == "M", 1, ifelse(data1$sexorien == "\"Feminine\"", 1, ifelse(data1$sexorien == "Male", 1,ifelse(data1$sexorien == "\"Another\"", 1, ifelse( data1$sexorien == "(I?)",1, 0))))))))))))))))))))))))))))
 data1SexOrien = as.data.frame(data1SexOrien)
+
 sexOrienLevels = as.factor(data1$sexorien)
 levels(sexOrienLevels)
 
@@ -295,16 +301,19 @@ write.csv(dataAnalysis, "dataAnalysis.csv", row.names = FALSE)
 Here I have an example of the model with missing values found in the sexual orientation variable indicated as a 1 for missing and 0 for non-missing.  Then I include the other covariates in the model and allow the model to have different intercepts for different sites, which are the locations that each program took place at.
 
 Overall, none of the included covariates are statistically significantly related to missing values in sexual orientation.
+
+OtherGI only had three people so I dropped it.
 ```{r}
 library(nlme)
 library(lme4)
 ageNum = as.numeric(dataAnalysis$age)
+sum(otherGI)
 dataAnalysis$ageNum = ageNum
-model = glmer(missingSexOrien ~ female +data1SexOrien + otherGI + black + hispanic + multi + otherEth +(1 | site), family = binomial("logit"), data = dataAnalysis)
+model = glmer(missingSexOrien ~ female +data1SexOrien + Prog + black + hispanic + multi + otherEth +(1 | site), family = binomial("logit"), data = dataAnalysis)
 summary(model)
 
 library(Zelig)
-z.out1 <- zelig(missingSexOrien ~ female +data1SexOrien +ageNum +Prog + otherGI + black + hispanic + multi + otherEth + site, model = "logit", data = dataAnalysis, cite = FALSE)
+z.out1 <- zelig(missingSexOrien ~ female +data1SexOrien +ageNum +Prog  + black + hispanic + multi + otherEth + site, model = "logit", data = dataAnalysis, cite = FALSE)
 summary(z.out1)
 
 .05/27
